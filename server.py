@@ -2,11 +2,13 @@ import asyncio
 import logging
 import json
 import platform
+import threading
 from aiortc import RTCPeerConnection, RTCSessionDescription
 from aiortc.contrib.media import MediaPlayer
 from grpc.experimental import aio
 from webrtc_pusher.autogen import webrtc_pusher_pb2_grpc as webrtc_pusher_pb2_grpc
 from webrtc_pusher.autogen import webrtc_pusher_pb2 as webrtc_pusher_pb2_pb2
+from webrtc_pusher.remote import start as communicate_with_signaling_server
 
 
 class WebRTC_Pusher_Service(webrtc_pusher_pb2_grpc.WebRTC_PusherServicer):
@@ -56,7 +58,7 @@ async def _start_async_server():
     await server.wait_for_termination()
 
 
-def run_server():
+def run_webrtc_service():
     logging.basicConfig()
     loop = asyncio.get_event_loop()
     loop.create_task(_start_async_server())
@@ -64,4 +66,6 @@ def run_server():
 
 
 if __name__ == '__main__':
-    run_server()
+    t = threading.Thread(target=communicate_with_signaling_server, args=["http://dji-asdk-to-python.herokuapp.com"])
+    t.start()
+    run_webrtc_service()
