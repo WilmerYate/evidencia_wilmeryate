@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import json
-import platform
+
 import threading
 from aiortc import RTCPeerConnection, RTCSessionDescription
 from aiortc.contrib.media import MediaPlayer
